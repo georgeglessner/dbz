@@ -102,7 +102,7 @@ download_binary() {
     
     print_info "Downloading dbz $version for $platform..."
     
-    local download_url="https://github.com/${GITHUB_REPO}/releases/download/${version}/dbz_${platform}"
+    local download_url="https://github.com/${GITHUB_REPO}/releases/download/${version}/dbz-${platform}"
     local binary_path="${temp_dir}/${BINARY_NAME}"
     
     if ! curl -fsSL "$download_url" -o "$binary_path"; then
