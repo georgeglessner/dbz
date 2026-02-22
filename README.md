@@ -18,7 +18,7 @@
 ### Quick Install (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/georgeglessner/dbz/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/georgeglessner/dbz/main/scripts/install.sh | bash
 ```
 
 ### From Source
