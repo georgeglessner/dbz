@@ -54,7 +54,7 @@ detect_platform() {
 
     case "$OS" in
         linux|darwin)
-            PLATFORM="${OS}_${ARCH}"
+            PLATFORM="${OS}-${ARCH}"
             ;;
         *)
             print_error "Unsupported operating system: $OS"
