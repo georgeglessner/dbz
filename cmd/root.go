@@ -17,7 +17,7 @@ Examples:
   dbz list                         # List all running database containers
   dbz delete postgres              # Delete PostgreSQL container
 `,
-	Version: "0.1.0",
+	Version: "0.1.5",
 }
 
 func Execute() error {

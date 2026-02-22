@@ -48,9 +48,9 @@ ENTRYPOINT ["dbz"]
 CMD ["--help"]
 
 # Labels
-LABEL maintainer="dbz team"
+LABEL maintainer="George Glessner"
 LABEL description="dbz - Database CLI Tool"
-LABEL version="0.1.0"
+LABEL version="0.1.5"
 
 # Expose common database ports (for reference)
 EXPOSE 5432 3306 3307 8123
