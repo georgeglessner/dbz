@@ -37,10 +37,11 @@ jobs:
         run: go test -race -coverprofile=coverage.out -covermode=atomic ./...
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           file: ./coverage.out
           flags: unittests
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   lint:
     name: Lint
@@ -59,6 +60,9 @@ jobs:
         with:
           version: latest
           args: --timeout=5m
+
+      - name: Run go vet
+        run: go vet ./...
 
   build:
     name: Build
