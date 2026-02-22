@@ -55,9 +55,10 @@ jobs:
           go-version: '1.21'
 
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
           version: latest
+          args: --timeout=5m
 
   build:
     name: Build
@@ -89,8 +90,8 @@ jobs:
           fi
           go build -o $OUTPUT_NAME main.go
 
-      - name: Test binary (Linux only)
-        if: matrix.goos == 'linux'
+      - name: Test binary (Linux AMD64 only)
+        if: matrix.goos == 'linux' && matrix.goarch == 'amd64'
         run: |
           chmod +x dbz-linux-amd64
           ./dbz-linux-amd64 --version
