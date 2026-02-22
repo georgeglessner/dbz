@@ -12,7 +12,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Configuration
-GITHUB_REPO="dbz/dbz"
+GITHUB_REPO="georgeglessner/dbz"
 BINARY_NAME="dbz"
 INSTALL_DIR="/usr/local/bin"
 
