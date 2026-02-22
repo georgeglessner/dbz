@@ -22,11 +22,11 @@ print_error() {
 }
 
 print_success() {
-    echo -e "${GREEN}$1${NC}"
+    echo -e "${GREEN}$1${NC}" >&2
 }
 
 print_info() {
-    echo -e "${YELLOW}$1${NC}"
+    echo -e "${YELLOW}$1${NC}" >&2
 }
 
 # Check if command exists
