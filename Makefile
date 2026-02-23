@@ -149,7 +149,9 @@ ci-build:
 	$(GOBUILD) $(LDFLAGS) -o $(BINARY_NAME) main.go
 
 ## coverage: Generate coverage report
-coverage: test
+coverage:
+	@echo "Running tests with coverage..."
+	$(GOTEST) -coverprofile=coverage.out ./...
 	go tool cover -html=coverage.out -o coverage.html
 	@echo "📊 Coverage report generated: coverage.html"
 
