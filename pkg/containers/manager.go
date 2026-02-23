@@ -176,7 +176,7 @@ func createDuckDBDatabase(config ContainerConfig) (*ContainerInfo, error) {
 }
 
 // DeleteContainer removes a container by name or ID
-func DeleteContainer(containerName string) error {
+func DeleteContainer(containerName string, removeVolumes bool) error {
 	// Handle SQLite separately - check if it's a .db file or if we should look for one
 	if filepath.Ext(containerName) == ".db" {
 		return deleteSQLiteDatabase(containerName)
@@ -204,7 +204,7 @@ func DeleteContainer(containerName string) error {
 	defer manager.Close()
 
 	ctx := context.Background()
-	return manager.docker.DeleteContainer(ctx, containerName)
+	return manager.docker.DeleteContainer(ctx, containerName, removeVolumes)
 }
 
 // deleteSQLiteDatabase removes a SQLite database file

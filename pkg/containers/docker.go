@@ -282,7 +282,7 @@ func (d *DockerClient) StartContainer(ctx context.Context, containerName string)
 	return nil
 }
 
-func (d *DockerClient) DeleteContainer(ctx context.Context, containerName string) error {
+func (d *DockerClient) DeleteContainer(ctx context.Context, containerName string, removeVolumes bool) error {
 	// Try to find container by name first
 	containers, err := d.client.ContainerList(ctx, types.ContainerListOptions{All: true})
 	if err != nil {
@@ -309,8 +309,11 @@ func (d *DockerClient) DeleteContainer(ctx context.Context, containerName string
 		}
 	}
 
-	// Remove container
-	if err := d.client.ContainerRemove(ctx, containerID, types.ContainerRemoveOptions{}); err != nil {
+	// Remove container with optional volume removal
+	removeOptions := types.ContainerRemoveOptions{
+		RemoveVolumes: removeVolumes,
+	}
+	if err := d.client.ContainerRemove(ctx, containerID, removeOptions); err != nil {
 		return fmt.Errorf("failed to remove container: %w", err)
 	}
 
