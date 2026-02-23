@@ -2,6 +2,8 @@ package containers
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net"
@@ -469,10 +471,14 @@ func generateContainerName(dbType string) string {
 	return fmt.Sprintf("dbz-%s-%d", dbType, time.Now().Unix())
 }
 
-// generatePassword generates a random password
+// generatePassword generates a cryptographically secure random password
 func generatePassword() string {
-	// Simple password generation - in production, use a proper random generator
-	return "dbz_" + fmt.Sprintf("%d", time.Now().Unix())[:8]
+	b := make([]byte, 12)
+	if _, err := rand.Read(b); err != nil {
+		// Fallback to timestamp-based if crypto/rand fails
+		return "dbz_" + fmt.Sprintf("%d", time.Now().Unix())[:8]
+	}
+	return "dbz_" + base64.URLEncoding.EncodeToString(b)[:12]
 }
 
 // getMySQLCommand returns the command to run MySQL/MariaDB with proper authentication settings
