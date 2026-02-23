@@ -29,6 +29,10 @@ func (s *SQLite) GetEnvironment(config ContainerConfig) map[string]string {
 	return map[string]string{} // No environment variables for SQLite
 }
 
+func (s *SQLite) GetDataPath() string {
+	return "" // SQLite is file-based, no container volume needed
+}
+
 func (s *SQLite) GetConnectionInfo(config ContainerConfig, containerName string) ConnectionInfo {
 	// Use provided database name or container name
 	dbName := config.Database

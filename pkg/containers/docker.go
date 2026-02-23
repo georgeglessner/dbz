@@ -140,9 +140,9 @@ func (d *DockerClient) CreateContainer(ctx context.Context, config ContainerConf
 		AutoRemove:   false,
 	}
 
-	// Add volume if specified
-	if config.Volume != "" {
-		hostConfig.Binds = []string{fmt.Sprintf("%s:/data", config.Volume)}
+	// Add volume if specified (only for container-based databases)
+	if config.Volume != "" && db.GetDataPath() != "" {
+		hostConfig.Binds = []string{fmt.Sprintf("%s:%s", config.Volume, db.GetDataPath())}
 	}
 
 	// Network configuration

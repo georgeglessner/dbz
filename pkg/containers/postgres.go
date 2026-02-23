@@ -42,6 +42,10 @@ func (p *PostgreSQL) GetEnvironment(config ContainerConfig) map[string]string {
 	}
 }
 
+func (p *PostgreSQL) GetDataPath() string {
+	return "/var/lib/postgresql"
+}
+
 func (p *PostgreSQL) GetConnectionInfo(config ContainerConfig, containerName string) ConnectionInfo {
 	// Use provided values or defaults
 	dbName := config.Database

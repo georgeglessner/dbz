@@ -49,6 +49,9 @@ type Database interface {
 	// GetConnectionInfo returns connection information for this database
 	GetConnectionInfo(config ContainerConfig, containerName string) ConnectionInfo
 
+	// GetDataPath returns the path where database data should be mounted in the container
+	GetDataPath() string
+
 	// ExecuteSQL executes SQL commands (for initialization)
 	ExecuteSQL(containerID string, sqlFile string) error
 }

@@ -45,6 +45,10 @@ func (m *MySQL) GetEnvironment(config ContainerConfig) map[string]string {
 	}
 }
 
+func (m *MySQL) GetDataPath() string {
+	return "/var/lib/mysql"
+}
+
 func (m *MySQL) GetConnectionInfo(config ContainerConfig, containerName string) ConnectionInfo {
 	// Use provided values or defaults
 	dbName := config.Database
