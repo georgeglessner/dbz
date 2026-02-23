@@ -86,7 +86,7 @@ func executeSQLInContainer(container *containers.ContainerInfo, sql string) erro
 	if err != nil {
 		return fmt.Errorf("failed to create docker client: %w", err)
 	}
-	defer dockerClient.Close()
+	defer func() { _ = dockerClient.Close() }()
 
 	// Determine database type and credentials
 	dbType := container.Type

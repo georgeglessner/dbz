@@ -215,7 +215,7 @@ func findAvailablePort(startPort int) int {
 	for {
 		listener, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
 		if err == nil {
-			listener.Close()
+			_ = listener.Close()
 			return port
 		}
 		port++
@@ -376,7 +376,9 @@ func (d *DockerClient) pullImage(ctx context.Context, image string) error {
 	if err != nil {
 		return fmt.Errorf("failed to pull image: %w", err)
 	}
-	defer reader.Close()
+	defer func() {
+		_ = reader.Close()
+	}()
 
 	// Read and discard output (for progress indication)
 	_, err = io.Copy(io.Discard, reader)

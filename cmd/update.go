@@ -156,7 +156,11 @@ func runRemoteUpdate() error {
 	fmt.Print("Continue? [y/N]: ")
 
 	var response string
-	fmt.Scanln(&response)
+	if _, err := fmt.Scanln(&response); err != nil {
+		// If we can't read input (e.g., EOF), default to cancelling
+		fmt.Println("\nUpdate cancelled.")
+		return nil
+	}
 	response = strings.ToLower(strings.TrimSpace(response))
 
 	if response != "y" && response != "yes" {
@@ -170,7 +174,7 @@ func runRemoteUpdate() error {
 	if err != nil {
 		return fmt.Errorf("failed to download binary: %w", err)
 	}
-	defer os.Remove(binaryPath)
+	defer func() { _ = os.Remove(binaryPath) }()
 
 	// Install the binary
 	if err := installBinary(binaryPath, installPath); err != nil {
@@ -206,7 +210,9 @@ func getLatestVersion() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("github API returned status %d", resp.StatusCode)
@@ -231,29 +237,33 @@ func downloadBinary(version, platform string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to create temp file: %w", err)
 	}
-	defer tempFile.Close()
+	defer func() {
+		_ = tempFile.Close()
+	}()
 
 	resp, err := http.Get(downloadURL)
 	if err != nil {
-		os.Remove(tempFile.Name())
+		_ = os.Remove(tempFile.Name())
 		return "", fmt.Errorf("failed to download: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
-		os.Remove(tempFile.Name())
+		_ = os.Remove(tempFile.Name())
 		return "", fmt.Errorf("download failed with status %d (binary may not exist for %s)", resp.StatusCode, platform)
 	}
 
 	_, err = io.Copy(tempFile, resp.Body)
 	if err != nil {
-		os.Remove(tempFile.Name())
+		_ = os.Remove(tempFile.Name())
 		return "", fmt.Errorf("failed to save binary: %w", err)
 	}
 
 	// Make executable
 	if err := os.Chmod(tempFile.Name(), 0755); err != nil {
-		os.Remove(tempFile.Name())
+		_ = os.Remove(tempFile.Name())
 		return "", fmt.Errorf("failed to make binary executable: %w", err)
 	}
 

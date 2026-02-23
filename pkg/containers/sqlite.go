@@ -66,7 +66,7 @@ func (s *SQLite) ExecuteSQL(containerID string, sqlFile string) error {
 	if err != nil {
 		return fmt.Errorf("failed to open database: %w", err)
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	// Read SQL file
 	sqlContent, err := os.ReadFile(sqlFile)
