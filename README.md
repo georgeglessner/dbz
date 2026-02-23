@@ -72,6 +72,9 @@ dbz ls
 # Delete container by name
 dbz delete postgres
 
+# Delete container and associated volumes
+dbz delete postgres --volume
+
 # Delete SQLite database file
 dbz delete mydb.db
 ```
@@ -181,6 +184,31 @@ dbz create postgres --database prod_db --user admin --name production-postgres
 **Port Assignment:**
 If no `--port` flag is specified and the default port is already in use, dbz will automatically find and use the next available port.
 
+### Delete Command
+
+Delete a database container or file-based database.
+
+```bash
+dbz delete [container-name]
+```
+
+**Flags:**
+- `--volume, -v` - Also remove volumes associated with the container
+
+**Examples:**
+```bash
+# Delete a container
+dbz delete postgres
+
+# Delete container and volumes
+dbz delete postgres --volume
+
+# Delete SQLite database file
+dbz delete mydb.db
+```
+
+**Note:** For Docker containers, the `--volume` flag removes any anonymous volumes associated with the container. Named volumes or host-mounted volumes are not removed.
+
 ### Stop Command
 
 Stop a running database container.
@@ -281,17 +309,28 @@ INSERT INTO users (name, email) VALUES
 
 ### Update Command
 
+Update dbz to the latest version.
+
 ```bash
 dbz update [flags]
 ```
 
+**Modes:**
+- **Local (default)**: Rebuild from source code
+- **Remote**: Download latest release from GitHub
+
 **Flags:**
-- `--from, -f` - Path to dbz source directory (default: current directory or auto-detected)
+- `--from, -f` - Path to dbz source directory for local builds (default: current directory or auto-detected)
+- `--remote` - Download and install from GitHub releases
 
 **Examples:**
 ```bash
+# Update from local source (default)
 dbz update
 dbz update --from ~/Projects/dbz
+
+# Update from GitHub releases
+dbz update --remote
 ```
 
 ## Environment Variables
