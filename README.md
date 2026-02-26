@@ -165,7 +165,7 @@ dbz create [database-type] [sql-file] [flags]
 
 **Flags:**
 - `--port, -p` - Port to expose (auto-assign if not specified)
-- `--password` - Database password (auto-generate if not specified)
+- `--password, -d` - Database password (auto-generate if not specified)
 - `--database, -b` - Database name (default: testdb)
 - `--name, -c` - Docker container name (auto-generated if not specified)
 - `--user, -u` - Database user (default depends on database type)

@@ -47,7 +47,7 @@ func init() {
 	rootCmd.AddCommand(createCmd)
 
 	createCmd.Flags().IntVarP(&port, "port", "p", 0, "Port to expose (auto-assign if not specified)")
-	createCmd.Flags().StringVar(&password, "password", "", "Database password (auto-generate if not specified)")
+	createCmd.Flags().StringVarP(&password, "password", "d", "", "Database password (auto-generate if not specified)")
 	createCmd.Flags().StringVarP(&dbName, "database", "b", "", "Database name (default: testdb)")
 	createCmd.Flags().StringVarP(&dbUser, "user", "u", "", "Database user (default depends on database type)")
 	createCmd.Flags().StringVarP(&volume, "volume", "v", "", "Volume to mount for data persistence")
