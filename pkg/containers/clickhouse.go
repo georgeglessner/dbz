@@ -42,6 +42,10 @@ func (c *ClickHouse) GetEnvironment(config ContainerConfig) map[string]string {
 	}
 }
 
+func (c *ClickHouse) GetDataPath() string {
+	return "/var/lib/clickhouse"
+}
+
 func (c *ClickHouse) GetConnectionInfo(config ContainerConfig, containerName string) ConnectionInfo {
 	// Use provided values or defaults
 	dbName := config.Database

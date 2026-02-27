@@ -2,6 +2,8 @@ package containers
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net"
@@ -138,9 +140,9 @@ func (d *DockerClient) CreateContainer(ctx context.Context, config ContainerConf
 		AutoRemove:   false,
 	}
 
-	// Add volume if specified
-	if config.Volume != "" {
-		hostConfig.Binds = []string{fmt.Sprintf("%s:/data", config.Volume)}
+	// Add volume if specified (only for container-based databases)
+	if config.Volume != "" && db.GetDataPath() != "" {
+		hostConfig.Binds = []string{fmt.Sprintf("%s:%s", config.Volume, db.GetDataPath())}
 	}
 
 	// Network configuration
@@ -213,7 +215,7 @@ func findAvailablePort(startPort int) int {
 	for {
 		listener, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
 		if err == nil {
-			listener.Close()
+			_ = listener.Close()
 			return port
 		}
 		port++
@@ -280,7 +282,7 @@ func (d *DockerClient) StartContainer(ctx context.Context, containerName string)
 	return nil
 }
 
-func (d *DockerClient) DeleteContainer(ctx context.Context, containerName string) error {
+func (d *DockerClient) DeleteContainer(ctx context.Context, containerName string, removeVolumes bool) error {
 	// Try to find container by name first
 	containers, err := d.client.ContainerList(ctx, types.ContainerListOptions{All: true})
 	if err != nil {
@@ -307,8 +309,11 @@ func (d *DockerClient) DeleteContainer(ctx context.Context, containerName string
 		}
 	}
 
-	// Remove container
-	if err := d.client.ContainerRemove(ctx, containerID, types.ContainerRemoveOptions{}); err != nil {
+	// Remove container with optional volume removal
+	removeOptions := types.ContainerRemoveOptions{
+		RemoveVolumes: removeVolumes,
+	}
+	if err := d.client.ContainerRemove(ctx, containerID, removeOptions); err != nil {
 		return fmt.Errorf("failed to remove container: %w", err)
 	}
 
@@ -371,7 +376,9 @@ func (d *DockerClient) pullImage(ctx context.Context, image string) error {
 	if err != nil {
 		return fmt.Errorf("failed to pull image: %w", err)
 	}
-	defer reader.Close()
+	defer func() {
+		_ = reader.Close()
+	}()
 
 	// Read and discard output (for progress indication)
 	_, err = io.Copy(io.Discard, reader)
@@ -469,10 +476,14 @@ func generateContainerName(dbType string) string {
 	return fmt.Sprintf("dbz-%s-%d", dbType, time.Now().Unix())
 }
 
-// generatePassword generates a random password
+// generatePassword generates a cryptographically secure random password
 func generatePassword() string {
-	// Simple password generation - in production, use a proper random generator
-	return "dbz_" + fmt.Sprintf("%d", time.Now().Unix())[:8]
+	b := make([]byte, 12)
+	if _, err := rand.Read(b); err != nil {
+		// Fallback to timestamp-based if crypto/rand fails
+		return "dbz_" + fmt.Sprintf("%d", time.Now().Unix())[:8]
+	}
+	return "dbz_" + base64.URLEncoding.EncodeToString(b)[:12]
 }
 
 // getMySQLCommand returns the command to run MySQL/MariaDB with proper authentication settings

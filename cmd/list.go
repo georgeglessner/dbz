@@ -34,11 +34,11 @@ func runList(cmd *cobra.Command, args []string) error {
 
 	// Create a tabwriter for formatted output
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "NAME\tTYPE\tVERSION\tSTATUS\tPORT\tUSER\tDATABASE")
-	fmt.Fprintln(w, "----\t----\t-------\t------\t----\t----\t--------")
+	_, _ = fmt.Fprintln(w, "NAME\tTYPE\tVERSION\tSTATUS\tPORT\tUSER\tDATABASE")
+	_, _ = fmt.Fprintln(w, "----\t----\t-------\t------\t----\t----\t--------")
 
 	for _, container := range dbContainers {
-		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%d\t%s\t%s\n",
+		_, _ = fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%d\t%s\t%s\n",
 			container.Name,
 			container.Type,
 			container.Version,
@@ -49,6 +49,6 @@ func runList(cmd *cobra.Command, args []string) error {
 		)
 	}
 
-	w.Flush()
+	_ = w.Flush()
 	return nil
 }

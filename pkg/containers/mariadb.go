@@ -45,6 +45,10 @@ func (m *MariaDB) GetEnvironment(config ContainerConfig) map[string]string {
 	}
 }
 
+func (m *MariaDB) GetDataPath() string {
+	return "/var/lib/mysql"
+}
+
 func (m *MariaDB) GetConnectionInfo(config ContainerConfig, containerName string) ConnectionInfo {
 	// Use provided values or defaults
 	dbName := config.Database

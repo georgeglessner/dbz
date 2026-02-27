@@ -45,7 +45,7 @@ func CreateContainer(config ContainerConfig) (*ContainerInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer manager.Close()
+	defer func() { _ = manager.Close() }()
 
 	// Get database implementation
 	db, err := DatabaseFactory(config.Type)
@@ -84,13 +84,13 @@ func createSQLiteDatabase(config ContainerConfig) (*ContainerInfo, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create database file: %w", err)
 	}
-	file.Close()
+	_ = file.Close()
 
 	// Execute SQL file if provided
 	if config.SQLFile != "" {
 		if err := db.ExecuteSQL(dbPath, config.SQLFile); err != nil {
 			// Clean up on error
-			os.Remove(dbPath)
+			_ = os.Remove(dbPath)
 			return nil, fmt.Errorf("failed to execute SQL file: %w", err)
 		}
 	}
@@ -143,13 +143,13 @@ func createDuckDBDatabase(config ContainerConfig) (*ContainerInfo, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create database file: %w", err)
 	}
-	file.Close()
+	_ = file.Close()
 
 	// Execute SQL file if provided
 	if config.SQLFile != "" {
 		if err := db.ExecuteSQL(dbPath, config.SQLFile); err != nil {
 			// Clean up on error
-			os.Remove(dbPath)
+			_ = os.Remove(dbPath)
 			return nil, fmt.Errorf("failed to execute SQL file: %w", err)
 		}
 	}
@@ -176,7 +176,7 @@ func createDuckDBDatabase(config ContainerConfig) (*ContainerInfo, error) {
 }
 
 // DeleteContainer removes a container by name or ID
-func DeleteContainer(containerName string) error {
+func DeleteContainer(containerName string, removeVolumes bool) error {
 	// Handle SQLite separately - check if it's a .db file or if we should look for one
 	if filepath.Ext(containerName) == ".db" {
 		return deleteSQLiteDatabase(containerName)
@@ -201,10 +201,10 @@ func DeleteContainer(containerName string) error {
 	if err != nil {
 		return err
 	}
-	defer manager.Close()
+	defer func() { _ = manager.Close() }()
 
 	ctx := context.Background()
-	return manager.docker.DeleteContainer(ctx, containerName)
+	return manager.docker.DeleteContainer(ctx, containerName, removeVolumes)
 }
 
 // deleteSQLiteDatabase removes a SQLite database file
@@ -247,7 +247,7 @@ func ListContainers() ([]ContainerInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer manager.Close()
+	defer func() { _ = manager.Close() }()
 
 	ctx := context.Background()
 	dockerContainers, err := manager.docker.ListContainers(ctx)
@@ -353,7 +353,7 @@ func StopContainer(containerName string) error {
 	if err != nil {
 		return err
 	}
-	defer manager.Close()
+	defer func() { _ = manager.Close() }()
 
 	ctx := context.Background()
 	return manager.docker.StopContainer(ctx, containerName)
@@ -370,7 +370,7 @@ func StartContainer(containerName string) error {
 	if err != nil {
 		return err
 	}
-	defer manager.Close()
+	defer func() { _ = manager.Close() }()
 
 	ctx := context.Background()
 	return manager.docker.StartContainer(ctx, containerName)
@@ -382,7 +382,7 @@ func GetContainerInfo(containerName string) (*ContainerInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer manager.Close()
+	defer func() { _ = manager.Close() }()
 
 	ctx := context.Background()
 	return manager.docker.GetContainerByName(ctx, containerName)

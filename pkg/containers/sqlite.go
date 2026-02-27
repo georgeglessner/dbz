@@ -29,6 +29,10 @@ func (s *SQLite) GetEnvironment(config ContainerConfig) map[string]string {
 	return map[string]string{} // No environment variables for SQLite
 }
 
+func (s *SQLite) GetDataPath() string {
+	return "" // SQLite is file-based, no container volume needed
+}
+
 func (s *SQLite) GetConnectionInfo(config ContainerConfig, containerName string) ConnectionInfo {
 	// Use provided database name or container name
 	dbName := config.Database
@@ -62,7 +66,7 @@ func (s *SQLite) ExecuteSQL(containerID string, sqlFile string) error {
 	if err != nil {
 		return fmt.Errorf("failed to open database: %w", err)
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	// Read SQL file
 	sqlContent, err := os.ReadFile(sqlFile)

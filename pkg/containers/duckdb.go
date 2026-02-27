@@ -27,6 +27,10 @@ func (d *DuckDB) GetEnvironment(config ContainerConfig) map[string]string {
 	return map[string]string{} // Minimal environment for DuckDB
 }
 
+func (d *DuckDB) GetDataPath() string {
+	return "" // DuckDB stores files in working directory, no standard container path
+}
+
 func (d *DuckDB) GetConnectionInfo(config ContainerConfig, containerName string) ConnectionInfo {
 	// Use provided database name or container name
 	dbName := config.Database
