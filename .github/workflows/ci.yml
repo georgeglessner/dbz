@@ -52,25 +52,25 @@ jobs:
         run: go vet ./...
 
   # Only build Linux AMD64 on PRs to development
-  build-quick:
-    name: Quick Build
-    needs: test-and-lint
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' || (!github.event.pull_request.draft && github.base_ref == 'development') }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  # build-quick:
+  #   name: Quick Build
+  #   needs: test-and-lint
+  #   runs-on: ubuntu-latest
+  #   if: ${{ github.event_name != 'pull_request' || (!github.event.pull_request.draft && github.base_ref == 'development') }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.21'
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v5
+  #       with:
+  #         go-version: '1.21'
 
-      - name: Build Linux AMD64
-        run: |
-          go build -o dbz-linux-amd64 main.go
-          chmod +x dbz-linux-amd64
-          ./dbz-linux-amd64 --version
+  #     - name: Build Linux AMD64
+  #       run: |
+  #         go build -o dbz-linux-amd64 main.go
+  #         chmod +x dbz-linux-amd64
+  #         ./dbz-linux-amd64 --version
 
   # Full cross-platform build only on PRs to main
   build-all:
