@@ -17,11 +17,15 @@ Examples:
   dbz list                         # List all running database containers
   dbz delete postgres              # Delete PostgreSQL container
 `,
-	Version: "0.1.5",
 }
 
 func Execute() error {
 	return rootCmd.Execute()
+}
+
+// SetVersion sets the version for the root command
+func SetVersion(version string) {
+	rootCmd.Version = version
 }
 
 func init() {

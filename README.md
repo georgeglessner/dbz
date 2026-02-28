@@ -26,7 +26,7 @@ curl -fsSL https://raw.githubusercontent.com/georgeglessner/dbz/main/scripts/ins
 ```bash
 git clone https://github.com/georgeglessner/dbz.git
 cd dbz
-go build -o dbz main.go
+make build
 sudo mv dbz /usr/local/bin/
 ```
 
@@ -488,14 +488,14 @@ cd dbz
 # Install dependencies
 go mod download
 
-# Build the binary
-go build -o dbz main.go
+# Build the binary (use make build for proper version)
+make build
 
 # Run tests
 go test ./...
 
-# Install locally
-go install
+# Install locally (use make install for proper version)
+make install
 ```
 
 ## License

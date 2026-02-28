@@ -4,8 +4,7 @@
 BINARY_NAME=dbz
 INSTALL_PATH=/usr/local/bin
 VERSION=$(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
-BUILD_TIME=$(shell date -u '+%Y-%m-%d_%H:%M:%S')
-LDFLAGS=-ldflags "-X main.Version=$(VERSION) -X main.BuildTime=$(BUILD_TIME)"
+LDFLAGS=-ldflags "-X main.Version=$(VERSION)"
 
 # Go parameters
 GOCMD=go
@@ -104,11 +103,10 @@ release: clean
 	done
 	@echo "📦 Release builds complete in dist/"
 
-## docker-build: Build using Docker
+## docker-build: Build Docker image with version
 docker-build:
-	@echo "Building with Docker..."
-	docker run --rm -v $(PWD):/workspace -w /workspace golang:1.21 \
-		make build
+	@echo "Building Docker image..."
+	docker build --build-arg VERSION=$(VERSION) -t $(BINARY_NAME):$(VERSION) -t $(BINARY_NAME):latest .
 
 ## install-script: Make install script executable
 install-script:
@@ -158,7 +156,6 @@ coverage:
 # Version info
 version:
 	@echo "Version: $(VERSION)"
-	@echo "Build Time: $(BUILD_TIME)"
 
 # Default help target
 .DEFAULT_GOAL := help

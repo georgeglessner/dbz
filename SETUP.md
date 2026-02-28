@@ -29,9 +29,9 @@ go mod download
 make build
 ```
 
-Or manually:
+Or manually (version will show as "dev"):
 ```bash
-go build -o dbz main.go
+go build -ldflags "-X main.Version=$(git describe --tags --always --dirty 2>/dev/null || echo 'dev')" -o dbz main.go
 ```
 
 ### 4. Install System-wide (Optional)
@@ -74,8 +74,11 @@ make clean
 ### Manual Development
 
 ```bash
-# Build
+# Build (version will show as "dev" unless using ldflags)
 go build -o dbz main.go
+
+# Build with version (matches make build)
+go build -ldflags "-X main.Version=$(git describe --tags --always --dirty 2>/dev/null || echo 'dev')" -o dbz main.go
 
 # Run tests
 go test -v ./...

@@ -1,6 +1,9 @@
 # Build stage
 FROM golang:1.21-alpine AS builder
 
+# Accept version as build argument
+ARG VERSION=dev
+
 # Install build dependencies
 RUN apk add --no-cache git make
 
@@ -16,11 +19,14 @@ RUN go mod download
 # Copy source code
 COPY . .
 
-# Build the binary
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o dbz main.go
+# Build the binary with version
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s -X main.Version=${VERSION}" -o dbz main.go
 
 # Final stage
 FROM alpine:latest
+
+# Accept version for label
+ARG VERSION=dev
 
 # Install runtime dependencies
 RUN apk add --no-cache ca-certificates docker-cli
@@ -50,7 +56,7 @@ CMD ["--help"]
 # Labels
 LABEL maintainer="George Glessner"
 LABEL description="dbz - Database CLI Tool"
-LABEL version="0.1.5"
+LABEL version="${VERSION}"
 
 # Expose common database ports (for reference)
 EXPOSE 5432 3306 3307 8123
